@@ -1,0 +1,528 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>SafeGuard | Security Firewall</title>
+
+<style>
+:root {
+    color-scheme: dark;
+    --bg: #090506;
+    --panel: #170d10;
+    --panel-light: #1e1014;
+    --line: #49242c;
+    --red: #ff5268;
+    --red-bright: #ff304f;
+    --muted: #c3a2a8;
+    --text: #fff0f2;
+    --danger: #ff8996;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(
+            ellipse at 50% 0%,
+            rgba(115, 13, 35, 0.48) 0%,
+            rgba(65, 9, 23, 0.28) 28%,
+            transparent 62%
+        ),
+        radial-gradient(
+            ellipse at 0% 45%,
+            rgba(100, 10, 30, 0.15) 0%,
+            transparent 45%
+        ),
+        radial-gradient(
+            ellipse at 100% 80%,
+            rgba(110, 12, 32, 0.12) 0%,
+            transparent 42%
+        ),
+        var(--bg);
+    background-attachment: fixed;
+    font: 16px/1.5 Inter, "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+}
+
+main {
+    max-width: 1000px;
+    margin: auto;
+    padding: 36px 20px 70px;
+}
+
+/* Header */
+
+.top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 34px;
+}
+
+.mark {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #45121e, #200b10);
+    border: 1px solid #a83248;
+    display: grid;
+    place-items: center;
+    color: var(--red);
+    font-weight: 900;
+    font-size: 24px;
+    box-shadow: 0 0 24px rgba(255, 48, 79, 0.13);
+}
+
+.brand {
+    font-weight: 850;
+    letter-spacing: 0.12em;
+    font-size: 18px;
+}
+
+.sub {
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.035em;
+}
+
+/* Hero */
+
+h1 {
+    font-size: clamp(32px, 5vw, 54px);
+    line-height: 1.08;
+    margin: 16px 0;
+    letter-spacing: -0.035em;
+}
+
+.accent {
+    color: var(--red);
+    text-shadow: 0 0 28px rgba(255, 48, 79, 0.2);
+}
+
+.intro {
+    color: var(--muted);
+    max-width: 680px;
+    margin-bottom: 28px;
+}
+
+.tag {
+    display: inline-block;
+    border: 1px solid #853043;
+    border-radius: 30px;
+    padding: 5px 12px;
+    color: var(--red);
+    background: rgba(95, 12, 30, 0.24);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.045em;
+}
+
+/* Main panels */
+
+.panel {
+    background: rgba(23, 13, 16, 0.94);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 22px;
+    margin: 18px 0;
+    box-shadow:
+        0 18px 55px rgba(0, 0, 0, 0.24),
+        0 0 30px rgba(130, 15, 38, 0.055);
+}
+
+/* Form */
+
+label {
+    display: block;
+    font-weight: 650;
+    margin: 0 0 10px;
+}
+
+textarea,
+select {
+    width: 100%;
+    background: #0d080a;
+    color: var(--text);
+    border: 1px solid #59303a;
+    border-radius: 11px;
+    padding: 14px;
+    font: inherit;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+textarea {
+    min-height: 170px;
+    resize: vertical;
+}
+
+textarea::placeholder {
+    color: #9d7b83;
+}
+
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(255, 48, 79, 0.10);
+}
+
+select {
+    cursor: pointer;
+}
+
+.hint {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 7px;
+}
+
+/* Scan button */
+
+button {
+    margin-top: 16px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ff6377, #ff304f);
+    color: #26050c;
+    font-weight: 850;
+    font-size: 15px;
+    padding: 13px 22px;
+    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 25px rgba(255, 48, 79, 0.25);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+#status {
+    margin-top: 15px;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+}
+
+.error {
+    color: #ff9ba6 !important;
+}
+
+/* Results */
+
+.result {
+    display: none;
+}
+
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.metric {
+    background: rgba(10, 6, 8, 0.9);
+    border: 1px solid #49242c;
+    border-radius: 13px;
+    padding: 16px;
+    min-width: 0;
+}
+
+.metric small {
+    display: block;
+    color: var(--muted);
+}
+
+.metric strong {
+    display: block;
+    font-size: 25px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+#score,
+#level,
+#decision {
+    color: var(--red);
+}
+
+h2 {
+    font-size: 19px;
+    margin-top: 23px;
+    margin-bottom: 12px;
+}
+
+ul {
+    padding-left: 27px;
+    margin-top: 8px;
+}
+
+li {
+    margin: 9px 0;
+    color: #f0dce0;
+    overflow-wrap: anywhere;
+}
+
+#meta {
+    margin-top: 22px;
+}
+
+.foot {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 26px;
+}
+
+/* Mobile responsiveness */
+
+@media (max-width: 600px) {
+    main {
+        padding: 24px 14px 45px;
+    }
+
+    .metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .panel {
+        padding: 16px;
+        border-radius: 14px;
+    }
+
+    .top {
+        margin-bottom: 27px;
+    }
+
+    .sub {
+        font-size: 10px;
+    }
+
+    textarea {
+        min-height: 150px;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+    }
+}
+</style>
+</head>
+
+<body>
+<main>
+
+    <header class="top">
+        <div class="mark">S</div>
+        <div>
+            <div class="brand">SAFEGUARD</div>
+            <div class="sub">
+                INTELLIGENT FRAUD &amp; SECURITY COMPLIANCE FIREWALL
+            </div>
+        </div>
+    </header>
+
+    <section>
+        <div class="tag">DEFENSIVE SECURITY SCANNER</div>
+
+        <h1>
+            Inspect risk.<br>
+            <span class="accent">Protect decisions.</span>
+        </h1>
+
+        <p class="intro">
+            Analyze text for common prompt-injection, social-engineering,
+            and personal-data patterns. Deterministic rules always run;
+            Gemini adds context when configured.
+        </p>
+    </section>
+
+    <section class="panel">
+
+        <label for="source">Source label (optional)</label>
+
+        <select id="source">
+            <option value="manual">Manual input</option>
+            <option value="email">Email/message</option>
+            <option value="prompt">AI prompt</option>
+            <option value="other">Other</option>
+        </select>
+
+        <label for="text" style="margin-top: 18px">
+            Content to inspect
+        </label>
+
+        <textarea
+            id="text"
+            maxlength="10000"
+            placeholder="Paste synthetic or non-sensitive text to inspect (max 10,000 characters)..."
+        ></textarea>
+
+        <div class="hint">
+            Avoid entering real passwords, OTPs, financial data,
+            or confidential personal information.
+        </div>
+
+        <button id="scan" type="button">
+            Run security scan
+        </button>
+
+        <div id="status" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="panel result" id="result" aria-live="polite">
+
+        <div class="metrics">
+
+            <div class="metric">
+                <small>Risk score</small>
+                <strong id="score">—</strong>
+                <small>/ 100</small>
+            </div>
+
+            <div class="metric">
+                <small>Risk level</small>
+                <strong id="level">—</strong>
+            </div>
+
+            <div class="metric">
+                <small>Suggested decision</small>
+                <strong id="decision">—</strong>
+            </div>
+
+        </div>
+
+        <h2>Categories</h2>
+        <ul id="categories"></ul>
+
+        <h2>Evidence</h2>
+        <ul id="evidence"></ul>
+
+        <h2>Recommendations</h2>
+        <ul id="recommendations"></ul>
+
+        <p class="hint" id="meta"></p>
+    </section>
+
+    <p class="foot">
+        Prototype only. A low score is not proof of safety.
+        Review high-risk cases with a human and verify requests independently.
+    </p>
+
+</main>
+
+<script>
+const button = document.querySelector("#scan");
+const status = document.querySelector("#status");
+const result = document.querySelector("#result");
+
+function list(id, items) {
+    const ul = document.getElementById(id);
+    ul.replaceChildren();
+
+    (Array.isArray(items) ? items : []).forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = String(item);
+        ul.appendChild(li);
+    });
+}
+
+button.addEventListener("click", async () => {
+    const text = document.querySelector("#text").value;
+    const source = document.querySelector("#source").value;
+
+    if (!text.trim()) {
+        status.textContent = "Enter text to inspect first.";
+        status.className = "error";
+        document.querySelector("#text").focus();
+        return;
+    }
+
+    button.disabled = true;
+    status.className = "";
+    status.textContent = "Scanning...";
+    result.style.display = "none";
+
+    try {
+        const response = await fetch("/api/v1/scan", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                text: text,
+                source: source
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.detail ||
+                data.message ||
+                "Request failed (" + response.status + ")"
+            );
+        }
+
+        document.querySelector("#score").textContent =
+            data.riskScore ?? "—";
+
+        document.querySelector("#level").textContent =
+            data.riskLevel ?? "—";
+
+        document.querySelector("#decision").textContent =
+            data.decision ?? "—";
+
+        list("categories", data.categories);
+        list("evidence", data.evidence);
+        list("recommendations", data.recommendations);
+
+        document.querySelector("#meta").textContent =
+            "Analysis: " + (data.analysisMode ?? "UNKNOWN") +
+            " · Processing: " + (data.processingTimeMs ?? "—") + " ms";
+
+        result.style.display = "block";
+        status.textContent = "Scan complete.";
+
+    } catch (error) {
+        status.textContent =
+            error.message || "Could not connect to SafeGuard.";
+        status.className = "error";
+
+    } finally {
+        button.disabled = false;
+    }
+});
+</script>
+
+</body>
+</html>
